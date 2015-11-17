@@ -6,7 +6,7 @@
 **WARNING: This plugin is only compatible with ember-cli-deploy versions >= 0.5.0**
 <hr/>
 
-This plugin uses the scp command (through /sbin/sh) to copy built assets on your filesystem.
+This plugin uses the scp command (through /sbin/sh) to copy app assets onto a remote server.
 
 ## What is an ember-cli-deploy plugin?
 
@@ -22,7 +22,7 @@ To get up and running quickly, do the following:
 - Install this plugin
 
 ```bash
-$ ember install ember-cli-deploy-cp
+$ ember install ember-cli-deploy-scp
 ```
 
 - Place the following configuration into `config/deploy.js`
@@ -50,7 +50,7 @@ ember install ember-cli-deploy-scp
 
 ## ember-cli-deploy Hooks Implemented
 
-For detailed information on what plugin hooks are and how they work, please refer to the [Plugin Documentation][2].
+For detailed information on what plugin hooks are and how they work, please refer to the [Plugin Documentation][1].
 
 - `configure`
 - `upload`
@@ -99,8 +99,8 @@ The user to log in to the target host.
 
 The following properties are expected to be present on the deployment `context` object:
 
-- `distDir`                     (provided by [ember-cli-deploy-build][3])
-- `revisionData.revisionKey`    (provided by [ember-cli-deploy-revision-data][4])
+- `distDir`                     (provided by [ember-cli-deploy-build][2])
+- `revisionData.revisionKey`    (provided by [ember-cli-deploy-revision-data][3])
 
 ## Running Tests
 
