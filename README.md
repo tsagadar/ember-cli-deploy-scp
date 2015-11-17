@@ -1,12 +1,12 @@
-# Ember-cli-deploy-cp
+# Ember-cli-deploy-scp
 
-> An ember-cli-deploy-plugin to copy your built assets on your filesystem
+> An ember-cli-deploy-plugin to copy your built assets to a remote host
 
 <hr/>
 **WARNING: This plugin is only compatible with ember-cli-deploy versions >= 0.5.0**
 <hr/>
 
-This plugin uses [cpr][1] to copy built assets on your filesystem. It basically supports all its options.
+This plugin uses the scp command (through /sbin/sh) to copy built assets on your filesystem.
 
 ## What is an ember-cli-deploy plugin?
 
@@ -28,8 +28,10 @@ $ ember install ember-cli-deploy-cp
 - Place the following configuration into `config/deploy.js`
 
 ```javascript
-ENV.cp {
-  destDir: '/srv/www/htdocs/'
+ENV.scp {
+  destDir: '/home/myuser/public/',
+  host: 'example.com',
+  user: 'myuser'
 }
 ```
 
@@ -43,7 +45,7 @@ $ ember deploy
 Run the following command in your terminal:
 
 ```bash
-ember install ember-cli-deploy-cp
+ember install ember-cli-deploy-scp
 ```
 
 ## ember-cli-deploy Hooks Implemented
@@ -55,8 +57,6 @@ For detailed information on what plugin hooks are and how they work, please refe
 - `didDeploy`
 
 ## Configuration Options
-
-For detailed information on how configuration of plugins works, please refer to the [Plugin Documentation][2].
 
 ### destDir
 
@@ -82,43 +82,18 @@ if (context.revisionData.revisionKey) {
 }
 ```
 
-### deleteFirst
+### host
 
-Delete the [destDir](#destdir) with `rimraf` before the files are copied.
+The target host to copy the files to.
 
-*Default:* `false`
+*Required:*
 
-### overwrite
+### user
 
-If the destination exists, overwrite it.
+The user to log in to the target host.
 
-*Default:* `true`
+*Required:*
 
-### confirm
-
-After the copy operation, stat all the files and report errors if any are missing.
-
-*Default:* `true`
-
-### filePattern
-
-`RegExp` or `function` to test each file against before copying.
-
-*Default:* `undefined`  
-*Example:*  
-Because of the way ember-cli-deploy handles default config values internally, you need to provide a factory function as [filePattern](#filepattern) instead of the filter function directly.
-
-```javascript
-/*
- * Don't copy index.html 
- */
-filePattern: function (/* context */) {
-  return function(filePath) {
-    var indexPattern = "index.html";
-    return !(filePath.indexOf(indexPattern, filePath.length - indexPattern.length) !== -1);
-  };
-}
-```
 
 ## Prerequisites
 
@@ -131,11 +106,7 @@ The following properties are expected to be present on the deployment `context` 
 
 - `npm test`
 
-## TODO
 
-Tests ... right?
-
-[1]: https://github.com/davglass/cpr "cpr"
-[2]: http://ember-cli.github.io/ember-cli-deploy/plugins "Plugin Documentation"
-[3]: https://github.com/zapnito/ember-cli-deploy-build "ember-cli-deploy-build"
-[4]: https://github.com/zapnito/ember-cli-deploy-revision-data "ember-cli-deploy-revision-data"
+[1]: http://ember-cli.github.io/ember-cli-deploy/plugins "Plugin Documentation"
+[2]: https://github.com/zapnito/ember-cli-deploy-build "ember-cli-deploy-build"
+[3]: https://github.com/zapnito/ember-cli-deploy-revision-data "ember-cli-deploy-revision-data"

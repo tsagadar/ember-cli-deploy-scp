@@ -1,7 +1,7 @@
 {
-  "name": "ember-cli-deploy-cp",
-  "version": "0.3.0",
-  "description": "Ember CLI Deploy plugin to deploy file(s) on your filesystem.",
+  "name": "ember-cli-deploy-scp",
+  "version": "0.0.1",
+  "description": "Ember CLI Deploy plugin to deploy file(s) using scp.",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -11,7 +11,7 @@
     "build": "ember build",
     "test": "ember try:testall"
   },
-  "repository": "dschmidt/ember-cli-deploy-cp",
+  "repository": "tsagadar/ember-cli-deploy-scp",
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -41,7 +41,6 @@
     "ember-cli-deploy-plugin"
   ],
   "dependencies": {
-    "cpr": "1.0.0",
     "ember-cli-babel": "^5.0.0",
     "ember-cli-deploy-plugin": "^0.2.0",
     "silent-error": "^1.0.0"

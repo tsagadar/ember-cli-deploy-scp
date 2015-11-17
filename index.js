@@ -1,68 +1,54 @@
 /* jshint node: true */
-'use strict';
 
-
-var Promise   = require('ember-cli/lib/ext/promise');
+var Promise = require('ember-cli/lib/ext/promise');
 var DeployPluginBase = require('ember-cli-deploy-plugin');
-var cpr = require('cpr');
-var SilentError         = require('silent-error');
+var SilentError = require('silent-error');
 
 module.exports = {
-  name: 'ember-cli-deploy-cp',
+  name: 'ember-cli-deploy-scp',
 
-  createDeployPlugin: function(options) {
+  createDeployPlugin: function (options) {
     var DeployPlugin = DeployPluginBase.extend({
       name: options.name,
       defaultConfig: {
-        distDir: function(context) {
+        distDir: function (context) {
           return context.distDir;
         },
-        deleteFirst: false,
-        overwrite: true,
-        confirm: true,
-        filePattern: undefined,
 
-        didDeployMessage: function(context){
+        didDeployMessage: function (context) {
           var revisionKey = context.revisionData && context.revisionData.revisionKey;
           if (revisionKey) {
             return "Copied revision " + revisionKey + ".";
           }
-        },
+        }
       },
-      requiredConfig: ['destDir'],
-      configure: function(/* context */) {
-        this.log('validating config');
+      requiredConfig: ['destDir', 'host', 'user'],
 
-        ['distDir', 'deleteFirst', 'overwrite', 'confirm', 'didDeployMessage', 'filePattern'].forEach(this.applyDefaultConfigProperty.bind(this));
-
-        this.log('config ok');
-      },
-
-      upload: function(/* context */) {
+      upload: function (/* context */) {
         var distDir = this.readConfig('distDir');
         var destDir = this.readConfig('destDir');
+        var host = this.readConfig('host');
+        var user = this.readConfig('user');
 
-        var options = {
-          deleteFirst: this.readConfig('deleteFirst'),
-          overwrite: this.readConfig('overwrite'),
-          confirm: this.readConfig('confirm')
-        };
+        const that = this;
+        return new Promise(function (resolve, reject) {
+          var spawn = require('child_process').spawn;
+          var cmd = "scp -r " + distDir + '/* ' + user + '@' + host + ':' + destDir;
+          that.log('Uploading assets using command: ' + cmd);
+          var executor = spawn('/bin/sh', ['-c', cmd]);
 
-        if(this.readConfig('filePattern') !== undefined) {
-          options.filter = this.readConfig('filePattern');
-        }
-
-        return new Promise(function(resolve, reject) {
-          cpr(distDir, destDir, options, function(err, files) {
-            if(err) {
-              return reject(new SilentError('Could not copy files' + err));
+          executor.on('close', function(code) {
+            if (code === 0) {
+              that.log('Successfully upload!');
+              resolve();
+            } else {
+              that.log('Failed: ' + code);
+              return reject(new SilentError('Could not copy files'));
             }
-
-            resolve();
           });
         });
       },
-      didDeploy: function(/* context */){
+      didDeploy: function (/* context */) {
         var didDeployMessage = this.readConfig('didDeployMessage');
         if (didDeployMessage) {
           this.log(didDeployMessage);
@@ -71,6 +57,4 @@ module.exports = {
     });
     return new DeployPlugin();
   }
-
-
 };
